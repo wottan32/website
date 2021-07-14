@@ -1,36 +1,49 @@
+import json_response
+from django.shortcuts import render
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.request import Request
+# from rest_framework.response import Response
+# from rest_framework.request import Request
 import requests
-from rest_framework import status
-from .models import Datos
-from .serializers import DatosSerializer
-from django.views.decorators.csrf import csrf_exempt
-
+# from rest_framework import status
+# from .models import Datos
+# from .serializers import DatosSerializer
+# from django.views.decorators.csrf import csrf_exempt
+# from django.http import JsonResponse
 # from datetime import datetime
 # from django.utils import timezone
 # from django.utils.six import BytesIO
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
+# from rest_framework.renderers import JSONRenderer
+# from rest_framework.parsers import JSONParser
 
-from django.http import HttpResponse
+from rest_framework.permissions import IsAuthenticated
+
+# from django.http import HttpResponse
+
+
 # from django.shortcuts import get_object_or_404
 
 # Lists all stocks or create a new one
 # stocks/
 
-def home(request):
-    response = requests.get('http://freegeoip.net/json/')
-    geodata = response.json()
-    return render(request, 'core/home.html', {
-        'ip': geodata['ip'],
-        'country': geodata['country_name']
-    })
+class DatosView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(request):
+        url = "https://api.chipax.com/clientes"
+        headers = {'Authorization': 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTExMiwiZXhwaXJhdGlvbiI6MTYyNTA4Mjg0MSwiaWF0IjoxNjI1MDc5MjQxfQ.T5OSbqrS5j2GoOZCUI2cVrkwcAdLQUQI6de3hEq8Vbg'}
+        response = requests.get(url, headers=headers)
+
+        return render(request, json_response)
 
 
+'''      
+        geodata = response.json()
+        return render(request, 'core/home.html', {
+            'ip': geodata['ip'],
+            'country': geodata['country_name']
+        })
 
-'''
-class DatosList(APIView):
+class DatosView(APIView):
 
     def get(self, request):
         queryset = Datos.objects.all()
